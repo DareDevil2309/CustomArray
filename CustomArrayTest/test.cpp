@@ -24,6 +24,30 @@ namespace ArrayTest {
         EXPECT_EQ(arr.size(), 0);
     }
 
+    TEST(MoveConstructorTest, CorrectCapacity) {
+        EXPECT_NO_THROW(Array<std::string> arr(Array<std::string>(10)));
+    }
+
+    TEST(MoveAssignmentOperatorTest, CorrectCapacity) {
+        EXPECT_NO_THROW(Array<std::string> arr = Array<std::string>(10));
+    }
+
+    TEST(CopyTest, CorrectCopy) {
+        Array<int> a1(10);
+        for (int i = 0; i < 5; i++) {
+            a1.insert(i);
+        }
+        Array<int> a2 = a1;
+
+        for (int i = 0; i < 5; i++) {
+            EXPECT_EQ(a2[i], i);
+        }
+
+        for (int i = 0; i < 5; i++) {
+            EXPECT_EQ(a1[i], i);
+        }
+    }
+
     TEST(TakeElementTest, InvalidIndexThrowsException) {
         Array<std::string> arr(1);
         std::string s = "Hello world";

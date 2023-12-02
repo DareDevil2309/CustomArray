@@ -23,6 +23,38 @@ inline Array<T>::Array(int capacity) :
 template<typename T>
 inline Array<T>::Array(const Array& other)
 {
+    capacity_ = other.capacity_;
+    size_ = other.size_;
+
+    buff_ = static_cast<T*>(malloc(capacity_ * sizeof(T)));
+
+    for (int i = 0; i < size_; i++) {
+        new(&buff_[i]) T(other.buff_[i]);
+    }
+}
+
+template<typename T>
+inline Array<T>::Array(Array&& other) {
+    capacity_ = other.capacity_;
+    size_ = other.size_;
+    buff_ = static_cast<T*>(malloc(capacity_ * sizeof(T)));
+
+    for (int i = 0; i < size_; i++) {
+        new(&buff_[i]) T(other.buff_[i]);
+    }
+}
+
+template<typename T>
+inline Array<T>& Array<T>::operator=(Array&& other) {
+    capacity_ = other.capacity_;
+    size_ = other.size_;
+    buff_ = static_cast<T*>(malloc(capacity_ * sizeof(T)));
+
+    for (int i = 0; i < size_; i++) {
+        new(&buff_[i]) T(other.buff_[i]);
+    }
+
+    return *this;
 }
 
 template<typename T>
@@ -30,6 +62,15 @@ inline Array<T>& Array<T>::operator=(const Array& other)
 {
     Array<T> temp(other);
     swap(this, other);
+}
+
+template<typename T>
+inline Array<T>::~Array() {
+    for (int i = 0; i < size_; i++) {
+        buff_[i].~T();
+    }
+
+    free(buff_);
 }
 
 template<typename T>
@@ -47,12 +88,12 @@ inline int Array<T>::insert(T&& value)
 template<typename T>
 inline int Array<T>::insert(int index, const T& value)
 {
-    if (size_ >= capacity_) {
-        resize();
+    if (index < 0 || index >= size_ + 1) {
+        throw std::out_of_range("Index out of range");
     }
 
-    if (index >= size_ + 1) {
-        throw std::out_of_range("Index out of range");
+    if (size_ >= capacity_) {
+        resize();
     }
 
     for (int i = size_; i > index; i--) {
@@ -73,7 +114,7 @@ inline int Array<T>::insert(int index, T&& value)
         resize();
     }
 
-    if (index >= size_ + 1) {
+    if (index < 0 || index >= size_ + 1) {
         throw std::out_of_range("Index out of range");
     }
 
@@ -107,7 +148,7 @@ inline int Array<T>::remove(int index)
 template<typename T>
 inline T& Array<T>::operator[](int index)
 {
-    if (index >= size_) {
+    if (index < 0 || index >= size_) {
         throw std::out_of_range("Index out of range");
     }
 
@@ -130,7 +171,6 @@ inline void Array<T>::resize()
 
     free(buff_);
     buff_ = temp;
-    temp = nullptr;
 }
 
 template<typename T>

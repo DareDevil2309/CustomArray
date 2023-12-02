@@ -49,7 +49,10 @@ public:
     Array();
     Array(int capacity);
     Array(const Array& rhs);
+    Array(Array&& other);
     Array<T>& operator=(const Array& other);
+    Array<T>& operator=(Array&& other);
+    ~Array();
     int insert(const T& value);
     int insert(T&& value);
     int insert(int index, const T& value);
